@@ -490,7 +490,9 @@ ul { list-style: none; }
 /* ---------- SECTION HEAD ---------- */
 .section-head {
   max-width: 720px;
+  margin: 0 auto;
   padding: 140px 6vw 40px;
+  text-align: center;
   position: relative;
   z-index: 2;
 }
@@ -508,6 +510,7 @@ ul { list-style: none; }
   font-size: clamp(32px, 5vw, 56px);
   font-weight: 800;
   letter-spacing: -1px;
+  line-height: 1.1;
   margin-bottom: 18px;
 }
 
@@ -531,8 +534,38 @@ ul { list-style: none; }
   background: linear-gradient(180deg, var(--black) 0%, var(--black-2) 100%);
 }
 
+/* ---------- SECTION SEAM (transition between sections) ---------- */
+.section-seam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.section-seam__line {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mid), var(--green), var(--mid), transparent);
+  box-shadow: 0 0 30px 6px rgba(40,135,96,0.55);
+  transform: translateX(-50%);
+  transition: width 1.2s cubic-bezier(.2,.8,.2,1), opacity 1.2s ease;
+  opacity: 0;
+}
+
+.section-seam.visible .section-seam__line {
+  width: 80%;
+  opacity: 1;
+}
+
 .filters {
   display: flex;
+  justify-content: center;
   gap: 12px;
   padding: 0 6vw 40px;
   flex-wrap: wrap;
@@ -673,7 +706,6 @@ ul { list-style: none; }
   border-radius: 50%;
   background: rgba(6,9,7,0.55);
   border: 1px solid rgba(244,247,244,0.35);
-  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -842,7 +874,7 @@ ul { list-style: none; }
   position: relative;
   z-index: 2;
   max-width: 720px;
-  margin: 0 6vw;
+  margin: 0 auto;
   background: rgba(6,9,7,0.5);
   border: 1px solid rgba(92,168,124,0.15);
   border-radius: 20px;

@@ -4,6 +4,30 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
+// Custom-paced smooth scroll for in-page links (native smooth-scroll is too
+// fast for the reveal-on-scroll animations to be visible once it settles)
+function smoothScrollTo(targetY, duration = 900) {
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    window.scrollTo({ top: startY + diff * eased, left: 0, behavior: 'instant' });
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const target = document.getElementById(link.getAttribute('href').slice(1));
+    if (!target) return;
+    e.preventDefault();
+    smoothScrollTo(target.getBoundingClientRect().top + window.scrollY);
+  });
+});
+
 // Hero parallax
 const heroShapes = document.querySelector('.hero__shapes');
 const heroContent = document.querySelector('.hero__content');
@@ -147,9 +171,9 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.6 });
 cards.forEach(card => revealObserver.observe(card));
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.reveal, .section-seam').forEach(el => revealObserver.observe(el));
 
 // Contact form (static demo — replace action with real backend/Formspree if needed)
 const form = document.getElementById('contactForm');
