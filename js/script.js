@@ -81,6 +81,56 @@ cards.forEach(card => {
   });
 });
 
+const heroPreview = document.getElementById('heroPreview');
+if (heroPreview) {
+  const heroVideos = [
+    { id: 'BlSJeWXsxzc', title: 'vlog meia maratona floripa' },
+    { id: 'iew5npO-93A', title: 'como manter a dieta durante a semana' },
+    { id: 'agY1oMIIgfc', title: 'final de semana em Orlando' },
+  ];
+  const heroPreviewMedia = heroPreview.querySelector('.hero__preview-media');
+  const heroPreviewTitle = heroPreview.querySelector('.hero__preview-title');
+  let heroVideoIndex = 0;
+  let heroRotateTimer = null;
+
+  function setHeroVideo(index) {
+    const v = heroVideos[index];
+    heroPreview.dataset.video = v.id;
+    heroPreviewMedia.style.backgroundImage = `url('https://i.ytimg.com/vi/${v.id}/hqdefault.jpg')`;
+    heroPreviewTitle.textContent = v.title;
+    heroPreview.setAttribute('aria-label', `Assistir: ${v.title}`);
+  }
+
+  function rotateHeroVideo() {
+    heroVideoIndex = (heroVideoIndex + 1) % heroVideos.length;
+    heroPreview.classList.add('fading');
+    setTimeout(() => {
+      setHeroVideo(heroVideoIndex);
+      heroPreview.classList.remove('fading');
+    }, 300);
+  }
+
+  function startHeroRotation() {
+    heroRotateTimer = setInterval(rotateHeroVideo, 4500);
+  }
+
+  function stopHeroRotation() {
+    clearInterval(heroRotateTimer);
+  }
+
+  startHeroRotation();
+  heroPreview.addEventListener('mouseenter', stopHeroRotation);
+  heroPreview.addEventListener('mouseleave', startHeroRotation);
+
+  heroPreview.addEventListener('click', () => openVideoModal(heroPreview.dataset.video));
+  heroPreview.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openVideoModal(heroPreview.dataset.video);
+    }
+  });
+}
+
 videoModalClose.addEventListener('click', closeVideoModal);
 videoModal.addEventListener('click', (e) => {
   if (e.target === videoModal) closeVideoModal();
