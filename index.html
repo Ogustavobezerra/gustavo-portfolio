@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gustavo Bezerra — Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="noise"></div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a href="#home" class="nav__logo" aria-label="Gustavo Bezerra">
+    <img src="assets/logo.png" alt="Logo GB" class="nav__logo-img">
+  </a>
+  <nav class="nav__links">
+    <a href="#home">Início</a>
+    <a href="#portfolio">Portfólio</a>
+    <a href="#contact">Contato</a>
+  </nav>
+  <a href="#contact" class="nav__cta">Fale comigo</a>
+  <button class="nav__burger" id="burger" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home">Início</a>
+  <a href="#portfolio">Portfólio</a>
+  <a href="#contact">Contato</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero__shapes" aria-hidden="true">
+    <div class="shape shape--1"></div>
+    <div class="shape shape--2"></div>
+    <div class="shape shape--3"></div>
+    <div class="shape shape--4"></div>
+  </div>
+  <div class="glow glow--top"></div>
+  <div class="glow glow--bottom"></div>
+
+  <div class="hero__content">
+    <p class="hero__tag">EDIÇÃO&nbsp;/&nbsp;DESIGN</p>
+
+    <h1 class="hero__title">
+      <span class="hero__script">Gustavo</span>
+      <span class="hero__big">Portfolio<i class="dot"></i></span>
+    </h1>
+
+    <p class="hero__sub">Gustavo Bezerra — Portfólio 2026</p>
+
+    <div class="hero__footer">
+      <div class="hero__contact">
+        <p><span>Instagram:</span> @its.gbedit</p>
+        <p><span>E-mail:</span> its.gbedit@gmail.com</p>
+      </div>
+      <div class="hero__hint">
+        <span>/</span>
+        <p>Exibição de<br>Portfólio</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="#portfolio" class="scroll-cue" aria-label="Rolar para baixo">
+    <span></span>
+  </a>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="section-head reveal">
+    <p class="section-tag">// 01 — Trabalhos</p>
+    <h2>Meu <span>Portfólio</span></h2>
+    <p class="section-desc">Uma seleção de vídeos que já editei.</p>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">Todos</button>
+    <button class="filter" data-filter="vertical">Vídeo Vertical</button>
+    <button class="filter" data-filter="horizontal">Vídeo Horizontal</button>
+  </div>
+
+  <div class="grid" id="grid">
+    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="iew5npO-93A" tabindex="0" role="button" aria-label="Assistir: como manter a dieta durante a semana (preparando marmitas)">
+      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/iew5npO-93A/hqdefault.jpg')">
+        <span class="card__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </div>
+      <div class="card__info">
+        <h3>como manter a dieta durante a semana (preparando marmitas)</h3>
+        <p>Horizontal</p>
+      </div>
+    </article>
+    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="agY1oMIIgfc" tabindex="0" role="button" aria-label="Assistir: final de semana em Orlando (Disney springs, treinos, girls night)">
+      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/agY1oMIIgfc/hqdefault.jpg')">
+        <span class="card__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </div>
+      <div class="card__info">
+        <h3>final de semana em Orlando (Disney springs, treinos, girls night)</h3>
+        <p>Horizontal</p>
+      </div>
+    </article>
+    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="BlSJeWXsxzc" tabindex="0" role="button" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
+      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg')">
+        <span class="card__play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </div>
+      <div class="card__info">
+        <h3>vlog meia maratona floripa | retirada de kit + pré e pós</h3>
+        <p>Horizontal</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- VIDEO MODAL -->
+<div class="video-modal" id="videoModal">
+  <div class="video-modal__box">
+    <button class="video-modal__close" id="videoModalClose" aria-label="Fechar vídeo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="video-modal__inner">
+      <div class="video-modal__player" id="videoModalPlayer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="glow glow--contact"></div>
+  <div class="section-head reveal">
+    <p class="section-tag">// 02 — Contato</p>
+    <h2>Vamos criar algo <span>incrível</span> juntos</h2>
+    <p class="section-desc">Disponível para novos projetos de edição e design. Entre em contato pelo canal que preferir.</p>
+  </div>
+
+  <div class="contact__grid">
+    <a class="contact__card reveal" href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">
+      <span class="contact__icon">
+        <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm0 2a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4zM17.4 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+      </span>
+      <p class="contact__label">Instagram</p>
+      <p class="contact__value">@its.gbedit</p>
+    </a>
+
+    <a class="contact__card reveal" href="mailto:its.gbedit@gmail.com">
+      <span class="contact__icon">
+        <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm17 2.9-7.4 5.6a1 1 0 0 1-1.2 0L4 7.9V18h16V7.9zM4.5 6l7.5 5.6L19.5 6h-15z"/></svg>
+      </span>
+      <p class="contact__label">E-mail</p>
+      <p class="contact__value">its.gbedit@gmail.com</p>
+    </a>
+
+    <a class="contact__card reveal" href="tel:+5511954122310">
+      <span class="contact__icon">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1L6.6 10.8z"/></svg>
+      </span>
+      <p class="contact__label">Telefone</p>
+      <p class="contact__value">(11) 95412-2310</p>
+    </a>
+  </div>
+
+  <form class="contact__form reveal" id="contactForm">
+    <div class="form__row">
+      <div class="form__field">
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" placeholder="Seu nome" required>
+      </div>
+      <div class="form__field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+      </div>
+    </div>
+    <div class="form__field">
+      <label for="message">Mensagem</label>
+      <textarea id="message" name="message" rows="4" placeholder="Conte um pouco sobre seu projeto..." required></textarea>
+    </div>
+    <button type="submit" class="form__submit">Enviar mensagem</button>
+    <p class="form__note" id="formNote"></p>
+  </form>
+</section>
+
+<footer class="footer">
+  <img src="assets/logo.png" alt="Logo GB" class="footer__logo-img">
+  <p>&copy; <span id="year"></span> Gustavo Bezerra. Todos os direitos reservados.</p>
+  <a href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">@its.gbedit</a>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
