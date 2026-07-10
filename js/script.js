@@ -111,6 +111,7 @@ if (heroPreview) {
     { id: 'BlSJeWXsxzc', title: 'vlog meia maratona floripa' },
     { id: 'iew5npO-93A', title: 'como manter a dieta durante a semana' },
     { id: 'agY1oMIIgfc', title: 'final de semana em Orlando' },
+    { id: '065tihMJ19s', title: 'como melhorar seus resultados em visitas comerciais' },
   ];
   const heroPreviewMedia = heroPreview.querySelector('.hero__preview-media');
   const heroPreviewTitle = heroPreview.querySelector('.hero__preview-title');
