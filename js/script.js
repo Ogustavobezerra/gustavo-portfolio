@@ -4,16 +4,49 @@ const FORM_ENDPOINT = 'https://formspree.io/f/mbgdqbow';
 // Single source of truth: the work grid, the hero timeline and the filter
 // counts are all rendered from this list. Adding an item with
 // `format: 'vertical'` updates the filters and counters on its own.
+// `platform` defaults to YouTube (thumbnail comes from YouTube); Instagram and
+// TikTok items need `url` (the post link) and `thumb` (a cover in assets/).
 const VIDEOS = [
   { id: 'BlSJeWXsxzc', title: 'vlog meia maratona floripa | retirada de kit + pré e pós', short: 'Meia maratona de Floripa', format: 'horizontal', meta: 'Horizontal · YouTube · Vlog' },
   { id: 'iew5npO-93A', title: 'como manter a dieta durante a semana (preparando marmitas)', short: 'Dieta da semana', format: 'horizontal', meta: 'Horizontal · YouTube · Lifestyle' },
   { id: 'agY1oMIIgfc', title: 'final de semana em Orlando (Disney Springs, treinos, girls night)', short: 'Fim de semana em Orlando', format: 'horizontal', meta: 'Horizontal · YouTube · Vlog de viagem' },
   { id: '065tihMJ19s', title: 'como melhorar seus resultados em visitas comerciais', short: 'Visitas comerciais', format: 'horizontal', meta: 'Horizontal · Comercial · com @produtoracliffs' },
+  { id: 'DdcilN5uSev', platform: 'instagram', url: 'https://www.instagram.com/reel/DdcilN5uSev/', thumb: 'assets/thumbs/ig-DdcilN5uSev.jpg', title: '3 erros que cometi começando a empreender', short: '3 erros empreendendo', format: 'vertical', meta: 'Vertical · Instagram · Reels' },
+  { id: 'Db3zBv-yfmX', platform: 'instagram', url: 'https://www.instagram.com/reel/Db3zBv-yfmX/', thumb: 'assets/thumbs/ig-Db3zBv-yfmX.jpg', title: 'ozonioterapia na barbearia: novidade para a barba', short: 'Ozonioterapia na barbearia', format: 'vertical', meta: 'Vertical · Comercial · com @produtoracliffs' },
+  { id: '7693295086523714834', platform: 'tiktok', url: 'https://www.tiktok.com/@danieluca___/video/7693295086523714834', thumb: 'assets/thumbs/tt-7693295086523714834.jpg', title: 'arrume-se comigo', short: 'Arrume-se comigo', format: 'vertical', meta: 'Vertical · TikTok · Lifestyle' },
+  { id: '7694677527599729927', platform: 'tiktok', url: 'https://www.tiktok.com/@danieluca___/video/7694677527599729927', thumb: 'assets/thumbs/tt-7694677527599729927.jpg', title: 'trocando o fio da minha pulseira', short: 'Fio da pulseira', format: 'vertical', meta: 'Vertical · TikTok · Lifestyle' },
 ];
+
+// The hero feature card is 16:9, so it only cycles through horizontal videos
+const FEATURED = VIDEOS.filter(v => v.format === 'horizontal');
+
+// Per-platform player: embed URL, link to the original post, button label and
+// the aspect ratio of the player area in the modal
+const PLATFORMS = {
+  youtube: {
+    embed: v => `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0`,
+    link: v => `https://www.youtube.com/watch?v=${v.id}`,
+    label: 'Assistir no YouTube ↗',
+    ratio: 'landscape',
+  },
+  instagram: {
+    embed: v => `https://www.instagram.com/reel/${v.id}/embed/`,
+    link: v => v.url,
+    label: 'Ver no Instagram ↗',
+    ratio: 'instagram',
+  },
+  tiktok: {
+    embed: v => `https://www.tiktok.com/player/v1/${v.id}?autoplay=1&rel=0&description=0&music_info=0`,
+    link: v => v.url,
+    label: 'Ver no TikTok ↗',
+    ratio: 'portrait',
+  },
+};
+const platformOf = v => PLATFORMS[v.platform || 'youtube'];
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const EASE = 'cubic-bezier(.2, .8, .2, 1)';
-const thumbUrl = id => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const thumbUrl = v => v.thumb || `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
 const pad = n => String(n).padStart(2, '0');
 const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
@@ -48,16 +81,30 @@ matchMedia('(min-width: 761px)').addEventListener('change', e => { if (e.matches
 
 // ---------- Work grid ----------
 const grid = document.getElementById('grid');
-grid.innerHTML = VIDEOS.map((v, i) => `
-  <button class="card reveal" type="button" data-index="${i}" data-format="${v.format}" aria-label="Assistir: ${escapeHtml(v.title)}">
+const FORMAT_GROUPS = [['horizontal', 'Horizontal'], ['vertical', 'Vertical']];
+
+const cardHtml = (v, i) => `
+  <button class="card card--${v.format} reveal" type="button" data-index="${i}" aria-label="Assistir: ${escapeHtml(v.title)}">
     <span class="card__thumb">
-      <img src="${thumbUrl(v.id)}" alt="" width="480" height="360" loading="lazy">
+      <img src="${thumbUrl(v)}" alt="" width="${v.format === 'vertical' ? 540 : 480}" height="${v.format === 'vertical' ? 960 : 360}" loading="lazy">
       <span class="badge">${pad(i + 1)} · ${v.format}</span>
       <span class="card__overlay" aria-hidden="true"><span class="card__play">${PLAY_ICON}</span></span>
     </span>
     <span class="card__title">${escapeHtml(v.title)}</span>
     <span class="card__meta">${escapeHtml(v.meta)}</span>
-  </button>`).join('');
+  </button>`;
+
+// One group per format, each with its own column sizing (9:16 cards are narrower)
+grid.innerHTML = FORMAT_GROUPS.map(([format, label]) => {
+  const items = VIDEOS.map((v, i) => [v, i]).filter(([v]) => v.format === format);
+  if (!items.length) return '';
+  return `
+  <div class="grid__group" data-format="${format}">
+    <p class="grid__label">${label}</p>
+    <div class="grid__items grid__items--${format}">${items.map(([v, i]) => cardHtml(v, i)).join('')}</div>
+  </div>`;
+}).join('');
+grid.classList.add('is-all');
 
 const cards = [...grid.querySelectorAll('.card')];
 cards.forEach(card => {
@@ -85,12 +132,12 @@ filterButtons.forEach(btn => {
 
 function applyFilter(filter) {
   filterButtons.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === filter));
-  let matches = 0;
-  cards.forEach(card => {
-    const match = filter === 'all' || card.dataset.format === filter;
-    card.hidden = !match;
-    if (match) matches++;
+  grid.querySelectorAll('.grid__group').forEach(group => {
+    group.hidden = filter !== 'all' && group.dataset.format !== filter;
   });
+  // Group labels only help when both formats are on screen
+  grid.classList.toggle('is-all', filter === 'all');
+  const matches = VIDEOS.filter(v => filter === 'all' || v.format === filter).length;
   grid.hidden = matches === 0;
   empty.hidden = matches > 0;
   if (!matches && EMPTY_COPY[filter]) [emptyTitle.textContent, emptyText.textContent] = EMPTY_COPY[filter];
@@ -129,9 +176,9 @@ const timeline = document.getElementById('timeline');
 let featureIndex = 0;
 let featureSwapTimer = null;
 
-timeline.innerHTML = VIDEOS.map((v, i) => `
+timeline.innerHTML = FEATURED.map((v, i) => `
   <button class="timeline__item" type="button" aria-pressed="${i === 0}">
-    <img src="${thumbUrl(v.id)}" alt="" width="480" height="360" loading="lazy">
+    <img src="${thumbUrl(v)}" alt="" width="480" height="360" loading="lazy">
     <span class="timeline__label">${pad(i + 1)} · ${escapeHtml(v.short)}</span>
   </button>`).join('');
 
@@ -153,7 +200,7 @@ function setRotationPaused(reason, paused) {
 }
 
 timeline.addEventListener('animationend', (e) => {
-  if (e.animationName === 'timelineProgress') setFeature((featureIndex + 1) % VIDEOS.length);
+  if (e.animationName === 'timelineProgress') setFeature((featureIndex + 1) % FEATURED.length);
 });
 
 heroMedia.addEventListener('mouseenter', () => setRotationPaused('hover', true));
@@ -172,10 +219,10 @@ function setFeature(index) {
   featureIndex = index;
   timelineItems.forEach((item, i) => item.setAttribute('aria-pressed', i === index));
 
-  const v = VIDEOS[index];
+  const v = FEATURED[index];
   const apply = () => {
-    featureImg.src = thumbUrl(v.id);
-    featureEyebrow.textContent = `Em destaque · ${pad(index + 1)}/${pad(VIDEOS.length)}`;
+    featureImg.src = thumbUrl(v);
+    featureEyebrow.textContent = `Em destaque · ${pad(index + 1)}/${pad(FEATURED.length)}`;
     featureTitle.textContent = v.short;
     feature.setAttribute('aria-label', `Assistir: ${v.title}`);
     feature.classList.remove('is-swapping');
@@ -187,7 +234,7 @@ function setFeature(index) {
   featureSwapTimer = setTimeout(apply, 160);
 }
 
-feature.addEventListener('click', () => openModal(VIDEOS[featureIndex], featureImg, feature));
+feature.addEventListener('click', () => openModal(FEATURED[featureIndex], featureImg, feature));
 
 // ---------- Video modal ----------
 // The panel grows out of the clicked thumbnail and shrinks back into it
@@ -198,14 +245,16 @@ const modalPanel = document.getElementById('modalPanel');
 const modalVideo = document.getElementById('modalVideo');
 const modalTitle = document.getElementById('modalTitle');
 const modalMeta = document.getElementById('modalMeta');
-const modalYoutube = document.getElementById('modalYoutube');
+const modalLink = document.getElementById('modalLink');
 const modalClose = document.getElementById('modalClose');
 let modalOrigin = null;   // element whose rect the panel animates from/to
 let modalTrigger = null;  // element that gets focus back on close
 let modalAnim = null;
 
-// Transform that lays the panel's video area exactly over the origin rect
-// (panel uses transform-origin: 0 0). Must be measured untransformed.
+// Transform that centres the panel's video area on the origin rect, scaled
+// to its width (panel uses transform-origin: 0 0). Centring rather than
+// top-aligning keeps it right when the two shapes differ (e.g. Instagram's
+// 4:5 player growing out of a 9:16 card). Must be measured untransformed.
 function originTransform() {
   if (reduceMotion || !modalOrigin) return 'none';
   const from = modalOrigin.getBoundingClientRect();
@@ -213,8 +262,10 @@ function originTransform() {
   const panel = modalPanel.getBoundingClientRect();
   const video = modalVideo.getBoundingClientRect();
   const s = from.width / video.width;
-  const tx = from.left - panel.left - s * (video.left - panel.left);
-  const ty = from.top - panel.top - s * (video.top - panel.top);
+  const videoCx = video.left + video.width / 2 - panel.left;
+  const videoCy = video.top + video.height / 2 - panel.top;
+  const tx = from.left + from.width / 2 - panel.left - s * videoCx;
+  const ty = from.top + from.height / 2 - panel.top - s * videoCy;
   return `translate(${tx}px, ${ty}px) scale(${s})`;
 }
 
@@ -245,11 +296,15 @@ function openModal(video, origin, trigger) {
   modalOrigin = origin;
   modalTrigger = trigger;
 
-  modalVideo.style.backgroundImage = `url('${thumbUrl(video.id)}')`;
-  modalVideo.innerHTML = `<iframe src="https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0" title="${escapeHtml(video.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  const platform = platformOf(video);
+  // Set the player shape before anything measures the panel
+  modal.dataset.ratio = platform.ratio;
+  modalVideo.style.backgroundImage = `url('${thumbUrl(video)}')`;
+  modalVideo.innerHTML = `<iframe src="${platform.embed(video)}" title="${escapeHtml(video.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   modalTitle.textContent = video.title;
   modalMeta.textContent = video.meta;
-  modalYoutube.href = `https://www.youtube.com/watch?v=${video.id}`;
+  modalLink.href = platform.link(video);
+  modalLink.textContent = platform.label;
   modalPanel.setAttribute('aria-label', video.title);
 
   modal.inert = false;
@@ -288,7 +343,7 @@ document.getElementById('modalOverlay').addEventListener('click', closeModal);
 modal.querySelectorAll('[data-trap]').forEach(trap => {
   trap.addEventListener('focus', () => {
     if (trap.dataset.trap === 'start') return modalClose.focus();
-    (modalVideo.querySelector('iframe') || modalYoutube).focus();
+    (modalVideo.querySelector('iframe') || modalLink).focus();
   });
 });
 
@@ -304,7 +359,7 @@ document.addEventListener('keydown', (e) => {
 // ---------- Reveal on scroll ----------
 const revealEls = document.querySelectorAll('.reveal');
 // Cascade siblings that come into view together (cards in a row, services)
-document.querySelectorAll('.grid, .services__grid').forEach(group => {
+document.querySelectorAll('.grid__items, .services__grid').forEach(group => {
   [...group.children].forEach((el, i) => el.style.setProperty('--reveal-delay', `${(i % 4) * 90}ms`));
 });
 if (reduceMotion || !('IntersectionObserver' in window)) {

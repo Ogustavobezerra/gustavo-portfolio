@@ -393,32 +393,43 @@ button {
   pointer-events: none;
 }
 
+/* Hover darkening, same as the work cards */
+.feature__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(6,9,7,.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms var(--ease);
+}
+
+/* Solid white play, shown only on hover/focus like the work cards */
 .feature__play {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   place-items: center;
   width: 68px;
   height: 68px;
   margin: -34px 0 0 -34px;
   border-radius: 50%;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.22);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  transition: transform 260ms var(--ease);
+  background: var(--text);
+  opacity: 0;
+  transform: scale(.88);
+  transition: transform 260ms var(--ease), opacity 260ms var(--ease);
 }
 
-.feature__play svg { width: 24px; height: 24px; fill: var(--text); margin-left: 3px; }
+.feature__play svg { width: 24px; height: 24px; fill: var(--bg); margin-left: 3px; }
 
 .feature__caption {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -438,11 +449,14 @@ button {
 .feature.is-swapping .feature__caption { opacity: 0; }
 
 @media (hover: hover) {
-  .feature:hover .feature__img { transform: scale(1.03); }
-  .feature:hover .feature__play { transform: scale(1.06); }
+  .feature:hover .feature__img { transform: scale(1.045); }
+  .feature:hover .feature__overlay { opacity: 1; }
+  .feature:hover .feature__play { opacity: 1; transform: scale(1); }
 }
 
-.feature:focus-visible .feature__img { transform: scale(1.03); }
+.feature:focus-visible .feature__img { transform: scale(1.045); }
+.feature:focus-visible .feature__overlay { opacity: 1; }
+.feature:focus-visible .feature__play { opacity: 1; transform: scale(1); }
 
 .timeline {
   display: grid;
@@ -587,9 +601,32 @@ button {
 }
 
 .grid {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.grid__label {
+  margin-bottom: 18px;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.grid:not(.is-all) .grid__label { display: none; }
+
+.grid__items {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 28px;
+}
+
+/* 9:16 cards: about four across on desktop, two on phones */
+.grid__items--vertical {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 22vw, 240px), 1fr));
+  gap: 28px 20px;
 }
 
 .card {
@@ -609,6 +646,16 @@ button {
   border-radius: 18px;
   border: 1px solid var(--line);
   background: var(--surface);
+}
+
+.card--vertical .card__thumb { aspect-ratio: 9 / 16; }
+
+.card--vertical .card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 1rem;
 }
 
 .card__thumb img {
@@ -1074,8 +1121,32 @@ button {
 }
 
 .modal__video {
+  position: relative;
+  overflow: hidden;
   aspect-ratio: 16 / 9;
   background: #000 center / cover no-repeat;
+}
+
+/* Vertical players: narrow panel, sized so player + bar fit the screen height */
+.modal[data-ratio="portrait"] .modal__panel {
+  max-width: min(400px, calc((100vh - 230px) * 9 / 16));
+  max-width: min(400px, calc((100svh - 230px) * 9 / 16));
+}
+.modal[data-ratio="portrait"] .modal__video { aspect-ratio: 9 / 16; }
+
+/* Instagram's embed is a white card (header, 4:5 player, footer). Show only
+   the player: shift the iframe up past the 54px header and let the footer
+   overflow out of view. The bar's "Ver no Instagram" link stands in for it. */
+.modal[data-ratio="instagram"] .modal__panel {
+  max-width: min(440px, calc((100vh - 230px) * 4 / 5));
+  max-width: min(440px, calc((100svh - 230px) * 4 / 5));
+}
+.modal[data-ratio="instagram"] .modal__video { aspect-ratio: 4 / 5; }
+.modal[data-ratio="instagram"] .modal__video iframe {
+  position: absolute;
+  top: -54px;
+  left: 0;
+  height: calc(100% + 54px + 160px);
 }
 
 .modal__video iframe {
@@ -1196,7 +1267,7 @@ button {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .header, .badge, .feature__play {
+  .header, .badge {
     background: var(--surface);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
