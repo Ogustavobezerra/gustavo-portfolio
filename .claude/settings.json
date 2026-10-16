@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"http.server 8800\")",
+      "Bash(node debug_reveal.js)",
+      "Bash(node debug_navclick.js)",
+      "Bash(node debug_navclick2.js)",
+      "Bash(node navclick_shots.js)",
+      "Bash(pkill -f \"http.server 8801\")",
+      "Bash(node filters_test.js)",
+      "Bash(pkill -f \"http.server 8802\")",
+      "Bash(pkill -f \"http.server 8803\")",
+      "Bash(pkill -f \"http.server 8804\")",
+      "Bash(git commit -m ' *)",
+      "Bash(curl -s \"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=065tihMJ19s&format=json\")",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(command -v chromium-cli)",
+      "Bash(npx --yes playwright --version)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(npx --yes playwright install chromium --with-deps)",
+      "Bash(open -a \"Google Chrome\" \"http://localhost:8791/index.html#portfolio\")",
+      "Bash(open \"http://localhost:8791/index.html#portfolio\")",
+      "Bash(screencapture -x /private/tmp/claude-501/-Users-gustavobezerra-Desktop-skill/02974f74-a248-4f8f-a60e-338fc5b52fc5/scratchpad/portfolio-check.png)",
+      "Bash(node shot.js)",
+      "Bash(pkill -f \"http.server 8791\")",
+      "Bash(node shot2.js)"
+    ]
+  }
+}
