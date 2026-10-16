@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gustavo Bezerra — Portfólio</title>
+<meta name="description" content="Gustavo Bezerra — editor de vídeo e motion designer. Vlogs, reels e vídeos comerciais.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gustavo Bezerra — Portfólio">
+<meta property="og:description" content="Gustavo Bezerra — editor de vídeo e motion designer. Vlogs, reels e vídeos comerciais.">
+<meta property="og:image" content="https://gustavo-portfolio-nu.vercel.app/assets/og.jpg">
+<meta property="og:url" content="https://gustavo-portfolio-nu.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -23,7 +30,7 @@
     <a href="#contact">Contato</a>
   </nav>
   <a href="#contact" class="nav__cta">Fale comigo</a>
-  <button class="nav__burger" id="burger" aria-label="Abrir menu">
+  <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
     <span></span><span></span><span></span>
   </button>
 </header>
@@ -50,10 +57,13 @@
 
     <h1 class="hero__title">
       <span class="hero__script">Gustavo Bezerra</span>
-      <span class="hero__big">Portfolio<i class="dot"></i></span>
+      <span class="hero__big">Portfólio<i class="dot"></i></span>
     </h1>
 
-    <p class="hero__sub">Gustavo Bezerra — Portfólio 2026</p>
+    <div class="hero__intro">
+      <p class="hero__sub">Edito vlogs, reels e vídeos comerciais para criadores e marcas.</p>
+      <a href="#portfolio" class="btn">Ver trabalhos</a>
+    </div>
 
     <div class="hero__footer">
       <div class="hero__contact">
@@ -67,15 +77,23 @@
     </div>
   </div>
 
-  <div class="hero__preview" id="heroPreview" data-video="BlSJeWXsxzc" role="button" tabindex="0" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
-    <div class="hero__preview-media" style="background-image:url('https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg')">
-      <span class="hero__preview-play" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </span>
+  <div class="hero__aside" id="heroAside">
+    <div class="hero__preview" id="heroPreview" data-video="BlSJeWXsxzc" role="button" tabindex="0" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
+      <div class="hero__preview-media" style="background-image:url('https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg')">
+        <span class="hero__preview-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+      </div>
+      <div class="hero__preview-info">
+        <p class="hero__preview-tag">Trabalho recente</p>
+        <p class="hero__preview-title">vlog meia maratona floripa</p>
+      </div>
     </div>
-    <div class="hero__preview-info">
-      <p class="hero__preview-tag">Trabalho recente</p>
-      <p class="hero__preview-title">vlog meia maratona floripa</p>
+    <div class="hero__dots">
+      <button class="hero__dot active" aria-current="true" aria-label="Vídeo 1: vlog meia maratona floripa"></button>
+      <button class="hero__dot" aria-label="Vídeo 2: como manter a dieta durante a semana"></button>
+      <button class="hero__dot" aria-label="Vídeo 3: final de semana em Orlando"></button>
+      <button class="hero__dot" aria-label="Vídeo 4: como melhorar seus resultados em visitas comerciais"></button>
     </div>
   </div>
 
@@ -94,9 +112,9 @@
   </div>
 
   <div class="filters" id="filters">
-    <button class="filter active" data-filter="all">Todos</button>
-    <button class="filter" data-filter="vertical">Vídeo Vertical</button>
-    <button class="filter" data-filter="horizontal">Vídeo Horizontal</button>
+    <button class="filter active" data-filter="all" aria-pressed="true">Todos</button>
+    <button class="filter" data-filter="vertical" aria-pressed="false">Vídeo Vertical</button>
+    <button class="filter" data-filter="horizontal" aria-pressed="false">Vídeo Horizontal</button>
   </div>
 
   <div class="grid" id="grid">
@@ -145,10 +163,12 @@
       </div>
     </article>
   </div>
+  <p class="grid__empty" id="gridEmpty" hidden>Vídeos verticais em breve 👀</p>
 </section>
 
 <!-- VIDEO MODAL -->
-<div class="video-modal" id="videoModal">
+<div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Player de vídeo" inert>
+  <span class="video-modal__trap" tabindex="0" data-trap="start"></span>
   <div class="video-modal__box">
     <button class="video-modal__close" id="videoModalClose" aria-label="Fechar vídeo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -157,6 +177,7 @@
       <div class="video-modal__player" id="videoModalPlayer"></div>
     </div>
   </div>
+  <span class="video-modal__trap" tabindex="0" data-trap="end"></span>
 </div>
 
 <!-- CONTACT -->
@@ -199,11 +220,11 @@
     <div class="form__row">
       <div class="form__field">
         <label for="name">Nome</label>
-        <input type="text" id="name" name="name" placeholder="Seu nome" required>
+        <input type="text" id="name" name="name" placeholder="Seu nome" autocomplete="name" required>
       </div>
       <div class="form__field">
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
       </div>
     </div>
     <div class="form__field">
@@ -211,7 +232,7 @@
       <textarea id="message" name="message" rows="4" placeholder="Conte um pouco sobre seu projeto..." required></textarea>
     </div>
     <button type="submit" class="form__submit">Enviar mensagem</button>
-    <p class="form__note" id="formNote"></p>
+    <p class="form__note" id="formNote" aria-live="polite"></p>
   </form>
 </section>
 
