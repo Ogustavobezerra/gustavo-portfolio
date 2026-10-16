@@ -1,312 +1,330 @@
 // Formspree endpoint
 const FORM_ENDPOINT = 'https://formspree.io/f/mbgdqbow';
 
+// Single source of truth: the work grid, the hero timeline and the filter
+// counts are all rendered from this list. Adding an item with
+// `format: 'vertical'` updates the filters and counters on its own.
+const VIDEOS = [
+  { id: 'BlSJeWXsxzc', title: 'vlog meia maratona floripa | retirada de kit + pré e pós', short: 'Meia maratona de Floripa', format: 'horizontal', meta: 'Horizontal · YouTube · Vlog' },
+  { id: 'iew5npO-93A', title: 'como manter a dieta durante a semana (preparando marmitas)', short: 'Dieta da semana', format: 'horizontal', meta: 'Horizontal · YouTube · Lifestyle' },
+  { id: 'agY1oMIIgfc', title: 'final de semana em Orlando (Disney Springs, treinos, girls night)', short: 'Fim de semana em Orlando', format: 'horizontal', meta: 'Horizontal · YouTube · Vlog de viagem' },
+  { id: '065tihMJ19s', title: 'como melhorar seus resultados em visitas comerciais', short: 'Visitas comerciais', format: 'horizontal', meta: 'Horizontal · Comercial · com @produtoracliffs' },
+];
+
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EASE = 'cubic-bezier(.2, .8, .2, 1)';
+const thumbUrl = id => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const pad = n => String(n).padStart(2, '0');
+const PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
-// Nav scroll state
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 40);
-});
-
-// Custom-paced smooth scroll for in-page links. Any wheel, touch or key input
-// from the user cancels it, so the page never fights them for control.
-const scrollInterruptEvents = ['wheel', 'touchstart', 'keydown'];
-let scrollRaf = null;
-
-function cancelSmoothScroll() {
-  if (scrollRaf !== null) cancelAnimationFrame(scrollRaf);
-  scrollRaf = null;
-  scrollInterruptEvents.forEach(type => window.removeEventListener(type, cancelSmoothScroll));
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
-function smoothScrollTo(targetY, duration = 600) {
-  cancelSmoothScroll();
-  if (reduceMotion) {
-    window.scrollTo({ top: targetY, left: 0, behavior: 'instant' });
-    return;
-  }
-  const startY = window.scrollY;
-  const diff = targetY - startY;
-  const startTime = performance.now();
-  function step(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    window.scrollTo({ top: startY + diff * eased, left: 0, behavior: 'instant' });
-    if (t < 1) scrollRaf = requestAnimationFrame(step);
-    else cancelSmoothScroll();
-  }
-  scrollInterruptEvents.forEach(type =>
-    window.addEventListener(type, cancelSmoothScroll, { once: true, passive: true }));
-  scrollRaf = requestAnimationFrame(step);
+// Scroll lock shared by the mobile menu and the video modal
+const locks = new Set();
+function setScrollLock(key, on) {
+  if (on) locks.add(key);
+  else locks.delete(key);
+  document.documentElement.classList.toggle('is-locked', locks.size > 0);
 }
 
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', (e) => {
-    const target = document.getElementById(link.getAttribute('href').slice(1));
-    if (!target) return;
-    e.preventDefault();
-    smoothScrollTo(target.getBoundingClientRect().top + window.scrollY);
-  });
-});
-
-// Hero parallax
-if (!reduceMotion) {
-  const heroShapes = document.querySelector('.hero__shapes');
-  const heroContent = document.querySelector('.hero__content');
-  let parallaxTicking = false;
-
-  function updateParallax() {
-    const y = window.scrollY;
-    if (heroShapes) heroShapes.style.transform = `translateY(${y * 0.18}px)`;
-    if (heroContent) {
-      heroContent.style.transform = `translateY(${y * 0.1}px)`;
-      heroContent.style.opacity = Math.max(1 - y / 500, 0);
-    }
-    parallaxTicking = false;
-  }
-
-  window.addEventListener('scroll', () => {
-    if (!parallaxTicking) {
-      requestAnimationFrame(updateParallax);
-      parallaxTicking = true;
-    }
-  });
-}
-
-// Mobile menu
+// ---------- Mobile menu ----------
 const burger = document.getElementById('burger');
 const mobileMenu = document.getElementById('mobileMenu');
+mobileMenu.inert = true;
 
-function setMobileMenu(open) {
-  mobileMenu.classList.toggle('open', open);
-  burger.classList.toggle('open', open);
+function setMenu(open) {
+  mobileMenu.classList.toggle('is-open', open);
+  mobileMenu.inert = !open;
   burger.setAttribute('aria-expanded', open);
+  burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  setScrollLock('menu', open);
 }
 
-burger.addEventListener('click', () => setMobileMenu(!mobileMenu.classList.contains('open')));
-mobileMenu.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => setMobileMenu(false));
-});
+burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+matchMedia('(min-width: 761px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
-// Portfolio filters
-const filters = document.querySelectorAll('.filter');
-const cards = document.querySelectorAll('.card');
+// ---------- Work grid ----------
 const grid = document.getElementById('grid');
-const gridEmpty = document.getElementById('gridEmpty');
-filters.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filters.forEach(b => {
-      b.classList.toggle('active', b === btn);
-      b.setAttribute('aria-pressed', b === btn);
-    });
-    const value = btn.dataset.filter;
-    let matches = 0;
-    cards.forEach(card => {
-      const match = value === 'all' || card.dataset.cat === value;
-      card.classList.toggle('hidden-filter', !match);
-      if (match) matches++;
-    });
-    grid.hidden = matches === 0;
-    gridEmpty.hidden = matches > 0;
+grid.innerHTML = VIDEOS.map((v, i) => `
+  <button class="card reveal" type="button" data-index="${i}" data-format="${v.format}" aria-label="Assistir: ${escapeHtml(v.title)}">
+    <span class="card__thumb">
+      <img src="${thumbUrl(v.id)}" alt="" width="480" height="360" loading="lazy">
+      <span class="badge">${pad(i + 1)} · ${v.format}</span>
+      <span class="card__overlay" aria-hidden="true"><span class="card__play">${PLAY_ICON}</span></span>
+    </span>
+    <span class="card__title">${escapeHtml(v.title)}</span>
+    <span class="card__meta">${escapeHtml(v.meta)}</span>
+  </button>`).join('');
+
+const cards = [...grid.querySelectorAll('.card')];
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    openModal(VIDEOS[card.dataset.index], card.querySelector('.card__thumb'), card);
   });
 });
 
-// Video modal (facade — iframe only loads on click). Opens out of the clicked
-// card and shrinks back into it (FLIP), and either direction can be
-// interrupted mid-flight.
-const videoModal = document.getElementById('videoModal');
-const videoModalBox = videoModal.querySelector('.video-modal__box');
-const videoModalInner = videoModal.querySelector('.video-modal__inner');
-const videoModalPlayer = document.getElementById('videoModalPlayer');
-const videoModalClose = document.getElementById('videoModalClose');
-const MODAL_EASING = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
-let modalTrigger = null;
-let modalAnim = null;
+// ---------- Filters ----------
+const filterButtons = document.querySelectorAll('.filter');
+const empty = document.getElementById('empty');
+const emptyTitle = document.getElementById('emptyTitle');
+const emptyText = document.getElementById('emptyText');
+const EMPTY_COPY = {
+  vertical: ['Nenhum vídeo vertical por aqui ainda', 'Reels, TikToks e Shorts entram em breve. Enquanto isso, veja os vídeos horizontais.'],
+  horizontal: ['Nenhum vídeo horizontal por aqui ainda', 'Novos vídeos entram em breve. Enquanto isso, veja os outros formatos.'],
+};
 
-// Transform that lays the (untransformed) modal box over the trigger's media
-function triggerTransform() {
-  if (reduceMotion || !modalTrigger) return 'none';
-  const media = modalTrigger.querySelector('.card__thumb, .hero__preview-media') || modalTrigger;
-  const from = media.getBoundingClientRect();
-  if (!from.width) return 'none';
-  const to = videoModalBox.getBoundingClientRect();
-  const dx = from.left + from.width / 2 - (to.left + to.width / 2);
-  const dy = from.top + from.height / 2 - (to.top + to.height / 2);
-  return `translate(${dx}px, ${dy}px) scale(${from.width / to.width})`;
+filterButtons.forEach(btn => {
+  const f = btn.dataset.filter;
+  btn.querySelector('.filter__count').textContent =
+    f === 'all' ? VIDEOS.length : VIDEOS.filter(v => v.format === f).length;
+  btn.addEventListener('click', () => applyFilter(f));
+});
+
+function applyFilter(filter) {
+  filterButtons.forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === filter));
+  let matches = 0;
+  cards.forEach(card => {
+    const match = filter === 'all' || card.dataset.format === filter;
+    card.hidden = !match;
+    if (match) matches++;
+  });
+  grid.hidden = matches === 0;
+  empty.hidden = matches > 0;
+  if (!matches && EMPTY_COPY[filter]) [emptyTitle.textContent, emptyText.textContent] = EMPTY_COPY[filter];
 }
 
-// Stops an in-flight animation and returns where the box is on screen right
-// now, so the next animation starts from there instead of jumping
+document.getElementById('emptyReset').addEventListener('click', () => {
+  applyFilter('all');
+  document.querySelector('.filter[data-filter="all"]').focus();
+});
+
+// ---------- Hero parallax ----------
+const heroInner = document.querySelector('.hero__inner');
+const heroGlow = document.querySelector('.hero__glow');
+if (!reduceMotion) {
+  let parallaxTicking = false;
+  const updateParallax = () => {
+    const y = Math.min(window.scrollY, window.innerHeight);
+    heroGlow.style.transform = `translateY(${y * 0.3}px)`;
+    heroInner.style.transform = `translateY(${y * 0.08}px)`;
+    heroInner.style.opacity = Math.max(1 - y / 700, 0);
+    parallaxTicking = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (parallaxTicking) return;
+    parallaxTicking = true;
+    requestAnimationFrame(updateParallax);
+  }, { passive: true });
+}
+
+// ---------- Hero feature + timeline ----------
+const feature = document.getElementById('feature');
+const featureImg = document.getElementById('featureImg');
+const featureEyebrow = document.getElementById('featureEyebrow');
+const featureTitle = document.getElementById('featureTitle');
+const timeline = document.getElementById('timeline');
+let featureIndex = 0;
+let featureSwapTimer = null;
+
+timeline.innerHTML = VIDEOS.map((v, i) => `
+  <button class="timeline__item" type="button" aria-pressed="${i === 0}">
+    <img src="${thumbUrl(v.id)}" alt="" width="480" height="360" loading="lazy">
+    <span class="timeline__label">${pad(i + 1)} · ${escapeHtml(v.short)}</span>
+  </button>`).join('');
+
+const timelineItems = [...timeline.querySelectorAll('.timeline__item')];
+timelineItems.forEach((item, i) => item.addEventListener('click', () => setFeature(i)));
+
+// Auto-rotation is driven by the progress bar on the active timeline item:
+// when its CSS animation ends, the next video comes in. Pausing the bar
+// therefore pauses the rotation, and it resumes exactly where it stopped.
+// Selecting an item starts a fresh bar on it. No bar under reduced motion,
+// so no rotation either.
+const heroMedia = document.querySelector('.hero__media');
+const rotationPauses = new Set();
+
+function setRotationPaused(reason, paused) {
+  if (paused) rotationPauses.add(reason);
+  else rotationPauses.delete(reason);
+  timeline.classList.toggle('is-paused', rotationPauses.size > 0);
+}
+
+timeline.addEventListener('animationend', (e) => {
+  if (e.animationName === 'timelineProgress') setFeature((featureIndex + 1) % VIDEOS.length);
+});
+
+heroMedia.addEventListener('mouseenter', () => setRotationPaused('hover', true));
+heroMedia.addEventListener('mouseleave', () => setRotationPaused('hover', false));
+// Only keyboard focus pauses; a tap leaves focus behind and would stall it
+heroMedia.addEventListener('focusin', (e) => setRotationPaused('focus', e.target.matches(':focus-visible')));
+heroMedia.addEventListener('focusout', (e) => {
+  if (!heroMedia.contains(e.relatedTarget)) setRotationPaused('focus', false);
+});
+document.addEventListener('visibilitychange', () => setRotationPaused('hidden', document.hidden));
+new IntersectionObserver(([entry]) => setRotationPaused('offscreen', !entry.isIntersecting))
+  .observe(heroMedia);
+
+function setFeature(index) {
+  if (index === featureIndex) return;
+  featureIndex = index;
+  timelineItems.forEach((item, i) => item.setAttribute('aria-pressed', i === index));
+
+  const v = VIDEOS[index];
+  const apply = () => {
+    featureImg.src = thumbUrl(v.id);
+    featureEyebrow.textContent = `Em destaque · ${pad(index + 1)}/${pad(VIDEOS.length)}`;
+    featureTitle.textContent = v.short;
+    feature.setAttribute('aria-label', `Assistir: ${v.title}`);
+    feature.classList.remove('is-swapping');
+  };
+  clearTimeout(featureSwapTimer);
+  if (reduceMotion) return apply();
+  // Quick crossfade: fade out, swap once faded, fade back in
+  feature.classList.add('is-swapping');
+  featureSwapTimer = setTimeout(apply, 160);
+}
+
+feature.addEventListener('click', () => openModal(VIDEOS[featureIndex], featureImg, feature));
+
+// ---------- Video modal ----------
+// The panel grows out of the clicked thumbnail and shrinks back into it
+// (FLIP). Either direction can be interrupted mid-flight: the next animation
+// starts from wherever the panel is on screen.
+const modal = document.getElementById('modal');
+const modalPanel = document.getElementById('modalPanel');
+const modalVideo = document.getElementById('modalVideo');
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalYoutube = document.getElementById('modalYoutube');
+const modalClose = document.getElementById('modalClose');
+let modalOrigin = null;   // element whose rect the panel animates from/to
+let modalTrigger = null;  // element that gets focus back on close
+let modalAnim = null;
+
+// Transform that lays the panel's video area exactly over the origin rect
+// (panel uses transform-origin: 0 0). Must be measured untransformed.
+function originTransform() {
+  if (reduceMotion || !modalOrigin) return 'none';
+  const from = modalOrigin.getBoundingClientRect();
+  if (!from.width) return 'none';
+  const panel = modalPanel.getBoundingClientRect();
+  const video = modalVideo.getBoundingClientRect();
+  const s = from.width / video.width;
+  const tx = from.left - panel.left - s * (video.left - panel.left);
+  const ty = from.top - panel.top - s * (video.top - panel.top);
+  return `translate(${tx}px, ${ty}px) scale(${s})`;
+}
+
 function haltModalAnim() {
   if (!modalAnim) return null;
-  const { transform, opacity } = getComputedStyle(videoModalBox);
+  const { transform, opacity } = getComputedStyle(modalPanel);
   modalAnim.cancel();
   modalAnim = null;
   return { transform, opacity };
 }
 
-function animateModalBox(from, to, onDone) {
-  modalAnim = videoModalBox.animate([from, to], {
-    duration: reduceMotion ? 200 : 350,
-    easing: MODAL_EASING,
+function animatePanel(from, to, onDone) {
+  const anim = modalPanel.animate([from, to], {
+    duration: reduceMotion ? 200 : 380,
+    easing: EASE,
+    fill: 'forwards',
   });
-  modalAnim.onfinish = () => {
-    modalAnim = null;
+  modalAnim = anim;
+  anim.onfinish = () => {
     if (onDone) onDone();
+    anim.cancel();
+    if (modalAnim === anim) modalAnim = null;
   };
 }
 
-function openVideoModal(videoId, trigger) {
+function openModal(video, origin, trigger) {
   const current = haltModalAnim();
+  modalOrigin = origin;
   modalTrigger = trigger;
-  videoModalInner.style.backgroundImage = `url('https://i.ytimg.com/vi/${videoId}/hqdefault.jpg')`;
-  videoModalPlayer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-  videoModal.inert = false;
-  videoModal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  animateModalBox(current || { transform: triggerTransform(), opacity: 0 }, { transform: 'none', opacity: 1 });
-  videoModalClose.focus({ preventScroll: true });
+
+  modalVideo.style.backgroundImage = `url('${thumbUrl(video.id)}')`;
+  modalVideo.innerHTML = `<iframe src="https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0" title="${escapeHtml(video.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  modalTitle.textContent = video.title;
+  modalMeta.textContent = video.meta;
+  modalYoutube.href = `https://www.youtube.com/watch?v=${video.id}`;
+  modalPanel.setAttribute('aria-label', video.title);
+
+  modal.inert = false;
+  modal.classList.remove('is-closing');
+  modal.classList.add('is-open');
+  setScrollLock('modal', true);
+  setRotationPaused('modal', true);
+
+  animatePanel(current || { transform: originTransform(), opacity: 0 }, { transform: 'none', opacity: 1 });
+  modalClose.focus({ preventScroll: true });
 }
 
-function closeVideoModal() {
-  if (!videoModal.classList.contains('open')) return;
+function closeModal() {
+  if (!modal.classList.contains('is-open')) return;
   const current = haltModalAnim() || { transform: 'none', opacity: 1 };
-  // Measure before the scrollbar comes back and shifts the layout
-  const target = triggerTransform();
-  videoModal.classList.remove('open');
-  videoModal.inert = true;
-  document.body.style.overflow = '';
-  animateModalBox(current, { transform: target, opacity: 0 }, () => {
-    videoModalPlayer.innerHTML = '';
+  const target = originTransform();
+
+  modal.classList.remove('is-open');
+  modal.classList.add('is-closing');
+  modal.inert = true;
+  setScrollLock('modal', false);
+  setRotationPaused('modal', false);
+
+  animatePanel(current, { transform: target, opacity: 0 }, () => {
+    modal.classList.remove('is-closing');
+    modalVideo.innerHTML = '';
   });
   if (modalTrigger) modalTrigger.focus({ preventScroll: true });
 }
 
-cards.forEach(card => {
-  const videoId = card.dataset.video;
-  if (!videoId) return;
-  card.addEventListener('click', () => openVideoModal(videoId, card));
-  card.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openVideoModal(videoId, card);
-    }
+modalClose.addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', closeModal);
+
+// Focus trap: sentinels on either side of the panel wrap Tab around. They
+// also catch Tab leaving the YouTube iframe, whose key events never reach us.
+modal.querySelectorAll('[data-trap]').forEach(trap => {
+  trap.addEventListener('focus', () => {
+    if (trap.dataset.trap === 'start') return modalClose.focus();
+    (modalVideo.querySelector('iframe') || modalYoutube).focus();
   });
 });
 
-const heroAside = document.getElementById('heroAside');
-const heroPreview = document.getElementById('heroPreview');
-if (heroPreview) {
-  const heroVideos = [
-    { id: 'BlSJeWXsxzc', title: 'vlog meia maratona floripa' },
-    { id: 'iew5npO-93A', title: 'como manter a dieta durante a semana' },
-    { id: 'agY1oMIIgfc', title: 'final de semana em Orlando' },
-    { id: '065tihMJ19s', title: 'como melhorar seus resultados em visitas comerciais' },
-  ];
-  const heroPreviewMedia = heroPreview.querySelector('.hero__preview-media');
-  const heroPreviewTitle = heroPreview.querySelector('.hero__preview-title');
-  const heroDots = heroAside.querySelectorAll('.hero__dot');
-  let heroVideoIndex = 0;
-  let heroRotateTimer = null;
-  let heroFadeTimer = null;
-
-  function setHeroVideo(index) {
-    const v = heroVideos[index];
-    heroPreview.dataset.video = v.id;
-    heroPreviewMedia.style.backgroundImage = `url('https://i.ytimg.com/vi/${v.id}/hqdefault.jpg')`;
-    heroPreviewTitle.textContent = v.title;
-    heroPreview.setAttribute('aria-label', `Assistir: ${v.title}`);
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (modal.classList.contains('is-open')) closeModal();
+  else if (mobileMenu.classList.contains('is-open')) {
+    setMenu(false);
+    burger.focus();
   }
+});
 
-  function showHeroVideo(index) {
-    heroVideoIndex = index;
-    heroDots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === index);
-      if (i === index) dot.setAttribute('aria-current', 'true');
-      else dot.removeAttribute('aria-current');
+// ---------- Reveal on scroll ----------
+const revealEls = document.querySelectorAll('.reveal');
+// Cascade siblings that come into view together (cards in a row, services)
+document.querySelectorAll('.grid, .services__grid').forEach(group => {
+  [...group.children].forEach((el, i) => el.style.setProperty('--reveal-delay', `${(i % 4) * 90}ms`));
+});
+if (reduceMotion || !('IntersectionObserver' in window)) {
+  revealEls.forEach(el => el.classList.add('is-visible'));
+} else {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      revealObserver.unobserve(entry.target);
     });
-    clearTimeout(heroFadeTimer);
-    heroPreview.classList.add('fading');
-    heroFadeTimer = setTimeout(() => {
-      setHeroVideo(index);
-      heroPreview.classList.remove('fading');
-    }, 300);
-  }
-
-  function stopHeroRotation() {
-    clearInterval(heroRotateTimer);
-    heroRotateTimer = null;
-  }
-
-  // Always starts a fresh timer
-  function startHeroRotation() {
-    stopHeroRotation();
-    if (reduceMotion || videoModal.classList.contains('open')) return;
-    heroRotateTimer = setInterval(() => showHeroVideo((heroVideoIndex + 1) % heroVideos.length), 4500);
-  }
-
-  startHeroRotation();
-  ['mouseenter', 'focusin', 'pointerdown'].forEach(type => heroAside.addEventListener(type, stopHeroRotation));
-  heroAside.addEventListener('mouseleave', startHeroRotation);
-  heroAside.addEventListener('focusout', (e) => {
-    if (heroAside.contains(e.relatedTarget)) return;
-    startHeroRotation();
-  });
-
-  // Picking a video pauses rotation; it restarts with a fresh timer once the
-  // pointer or focus leaves the card
-  heroDots.forEach((dot, i) => {
-    dot.addEventListener('click', () => {
-      stopHeroRotation();
-      if (i !== heroVideoIndex) showHeroVideo(i);
-    });
-  });
-
-  heroPreview.addEventListener('click', () => openVideoModal(heroPreview.dataset.video, heroPreview));
-  heroPreview.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openVideoModal(heroPreview.dataset.video, heroPreview);
-    }
-  });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => revealObserver.observe(el));
 }
 
-videoModalClose.addEventListener('click', closeVideoModal);
-videoModal.addEventListener('click', (e) => {
-  if (e.target === videoModal) closeVideoModal();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeVideoModal();
-});
-
-// Focus trap: sentinels on either side of the box wrap Tab around. Sentinels
-// (rather than a keydown handler) also catch Tab leaving the YouTube iframe,
-// whose key events never reach this document.
-videoModal.querySelectorAll('[data-trap]').forEach(trap => {
-  trap.addEventListener('focus', () => {
-    const iframe = videoModalPlayer.querySelector('iframe');
-    if (trap.dataset.trap === 'start' && iframe) iframe.focus();
-    else videoModalClose.focus();
-  });
-});
-
-// Reveal cards on scroll
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.15 });
-cards.forEach(card => revealObserver.observe(card));
-document.querySelectorAll('.reveal, .section-seam').forEach(el => revealObserver.observe(el));
-
-// Contact form (Formspree)
+// ---------- Contact form (Formspree) ----------
 const form = document.getElementById('contactForm');
+const formSubmit = document.getElementById('formSubmit');
 const formNote = document.getElementById('formNote');
-const formSubmit = form.querySelector('.form__submit');
+const formSuccess = document.getElementById('formSuccess');
 const formSubmitLabel = formSubmit.textContent;
 
 form.addEventListener('submit', async (e) => {
@@ -322,17 +340,22 @@ form.addEventListener('submit', async (e) => {
     });
     if (!res.ok) throw new Error(`Formspree respondeu ${res.status}`);
     form.reset();
-    formSubmit.textContent = 'Mensagem enviada ✓';
-    setTimeout(() => {
-      formSubmit.textContent = formSubmitLabel;
-      formSubmit.disabled = false;
-    }, 4000);
+    form.hidden = true;
+    formSuccess.hidden = false;
+    document.getElementById('formSuccessTitle').focus();
   } catch {
-    formSubmit.textContent = formSubmitLabel;
-    formSubmit.disabled = false;
     formNote.textContent = 'Não foi possível enviar. Tente pelo e-mail its.gbedit@gmail.com';
+  } finally {
+    formSubmit.disabled = false;
+    formSubmit.textContent = formSubmitLabel;
   }
 });
 
-// Footer year
+document.getElementById('formAgain').addEventListener('click', () => {
+  formSuccess.hidden = true;
+  form.hidden = false;
+  document.getElementById('name').focus();
+});
+
+// ---------- Footer year ----------
 document.getElementById('year').textContent = new Date().getFullYear();

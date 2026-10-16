@@ -3,244 +3,296 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gustavo Bezerra — Portfólio</title>
-<meta name="description" content="Gustavo Bezerra — editor de vídeo e motion designer. Vlogs, reels e vídeos comerciais.">
+<title>Gustavo Bezerra — Editor de vídeo e motion designer</title>
+<meta name="description" content="Gustavo Bezerra (gbedit) — editor de vídeo e motion designer em São Paulo. Vlogs, reels e vídeos comerciais para criadores e marcas.">
+<meta name="theme-color" content="#060907">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Gustavo Bezerra — Portfólio">
-<meta property="og:description" content="Gustavo Bezerra — editor de vídeo e motion designer. Vlogs, reels e vídeos comerciais.">
+<meta property="og:title" content="Gustavo Bezerra — Editor de vídeo e motion designer">
+<meta property="og:description" content="Gustavo Bezerra (gbedit) — editor de vídeo e motion designer em São Paulo. Vlogs, reels e vídeos comerciais para criadores e marcas.">
 <meta property="og:image" content="https://gustavo-portfolio-nu.vercel.app/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:url" content="https://gustavo-portfolio-nu.vercel.app/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=JetBrains+Mono:wght@400;500&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js');</script>
 </head>
-<body>
+<body id="top">
 
-<div class="noise"></div>
-
-<!-- NAV -->
-<header class="nav" id="nav">
-  <a href="#home" class="nav__logo" aria-label="Gustavo Bezerra">
-    <img src="assets/logo.png" alt="Logo GB" class="nav__logo-img">
-  </a>
-  <nav class="nav__links">
-    <a href="#home">Início</a>
-    <a href="#portfolio">Portfólio</a>
-    <a href="#contact">Contato</a>
-  </nav>
-  <a href="#contact" class="nav__cta">Fale comigo</a>
-  <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
-    <span></span><span></span><span></span>
-  </button>
+<!-- HEADER -->
+<header class="header">
+  <div class="container header__inner">
+    <a href="#top" class="brand" aria-label="Gustavo Bezerra — voltar ao início">
+      <img src="assets/logo.png" alt="" class="brand__logo" width="42" height="30">
+      <span class="brand__name">gbedit</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#trabalhos">Trabalhos</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a href="#contato" class="btn btn--primary btn--sm header__cta">Fale comigo</a>
+    <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#home">Início</a>
-  <a href="#portfolio">Portfólio</a>
-  <a href="#contact">Contato</a>
+  <nav aria-label="Menu mobile">
+    <a href="#trabalhos">Trabalhos</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#contato">Contato</a>
+  </nav>
+  <a href="#contato" class="btn btn--primary btn--lg">Fale comigo</a>
 </div>
 
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero__shapes" aria-hidden="true">
-    <div class="shape shape--1"></div>
-    <div class="shape shape--2"></div>
-    <div class="shape shape--3"></div>
-    <div class="shape shape--4"></div>
-  </div>
-  <div class="glow glow--top"></div>
-  <div class="glow glow--bottom"></div>
-
-  <div class="hero__content">
-    <p class="hero__tag">EDIÇÃO&nbsp;/&nbsp;DESIGN</p>
-
-    <h1 class="hero__title">
-      <span class="hero__script">Gustavo Bezerra</span>
-      <span class="hero__big">Portfólio<i class="dot"></i></span>
-    </h1>
-
-    <div class="hero__intro">
-      <p class="hero__sub">Edito vlogs, reels e vídeos comerciais para criadores e marcas.</p>
-      <a href="#portfolio" class="btn">Ver trabalhos</a>
-    </div>
-
-    <div class="hero__footer">
-      <div class="hero__contact">
-        <p><span>Instagram:</span> @its.gbedit</p>
-        <p><span>E-mail:</span> its.gbedit@gmail.com</p>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <p class="chip"><span class="chip__dot" aria-hidden="true"></span>Disponível para novos projetos</p>
+        <p class="eyebrow">Editor de vídeo · Motion design</p>
+        <h1 class="hero__title">Edição que prende do primeiro ao <span>último frame.</span></h1>
+        <p class="hero__lead">Sou o Gustavo. Edito vlogs, reels e vídeos comerciais para criadores e marcas, com ritmo, cor e motion pensados para cada plataforma.</p>
+        <div class="hero__actions">
+          <a href="#trabalhos" class="btn btn--primary btn--lg">
+            Ver trabalhos
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+          </a>
+          <a href="#contato" class="btn btn--ghost btn--lg">Pedir orçamento</a>
+        </div>
+        <p class="hero__meta">@its.gbedit · its.gbedit@gmail.com · São Paulo · remoto</p>
       </div>
-      <div class="hero__hint">
-        <span>/</span>
-        <p>Exibição de<br>Portfólio</p>
-      </div>
-    </div>
-  </div>
 
-  <div class="hero__aside" id="heroAside">
-    <div class="hero__preview" id="heroPreview" data-video="BlSJeWXsxzc" role="button" tabindex="0" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
-      <div class="hero__preview-media" style="background-image:url('https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg')">
-        <span class="hero__preview-play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-      </div>
-      <div class="hero__preview-info">
-        <p class="hero__preview-tag">Trabalho recente</p>
-        <p class="hero__preview-title">vlog meia maratona floripa</p>
+      <div class="hero__media">
+        <button class="feature" id="feature" type="button" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
+          <span class="feature__frame">
+            <img class="feature__img" id="featureImg" src="https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg" alt="" width="480" height="360">
+          </span>
+          <span class="feature__play" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="feature__caption">
+            <span class="eyebrow" id="featureEyebrow">Em destaque · 01/04</span>
+            <span class="feature__title" id="featureTitle">Meia maratona de Floripa</span>
+          </span>
+        </button>
+        <div class="timeline" id="timeline" role="group" aria-label="Escolher vídeo em destaque"></div>
       </div>
     </div>
-    <div class="hero__dots">
-      <button class="hero__dot active" aria-current="true" aria-label="Vídeo 1: vlog meia maratona floripa"></button>
-      <button class="hero__dot" aria-label="Vídeo 2: como manter a dieta durante a semana"></button>
-      <button class="hero__dot" aria-label="Vídeo 3: final de semana em Orlando"></button>
-      <button class="hero__dot" aria-label="Vídeo 4: como melhorar seus resultados em visitas comerciais"></button>
+  </section>
+
+  <!-- TRABALHOS -->
+  <section class="section works" id="trabalhos" aria-labelledby="works-title">
+    <div class="container">
+      <div class="works__head">
+        <div class="section-head reveal">
+          <p class="eyebrow">01 — Trabalhos</p>
+          <h2 class="h2" id="works-title">Trabalhos recentes</h2>
+          <p class="section-head__desc">Uma seleção de vídeos que editei. Toque em um para assistir.</p>
+        </div>
+        <div class="filters" role="group" aria-label="Filtrar por formato">
+          <button class="pill filter" type="button" data-filter="all" aria-pressed="true">Todos <span class="filter__count"></span></button>
+          <button class="pill filter" type="button" data-filter="horizontal" aria-pressed="false">Horizontal <span class="filter__count"></span></button>
+          <button class="pill filter" type="button" data-filter="vertical" aria-pressed="false">Vertical <span class="filter__count"></span></button>
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+
+      <div class="empty" id="empty" hidden>
+        <svg class="empty__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+        <p class="empty__title" id="emptyTitle">Nenhum vídeo vertical por aqui ainda</p>
+        <p class="empty__text" id="emptyText">Reels, TikToks e Shorts entram em breve. Enquanto isso, veja os vídeos horizontais.</p>
+        <button class="btn btn--ghost" id="emptyReset" type="button">Ver todos</button>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <a href="#portfolio" class="scroll-cue" aria-label="Rolar para baixo">
-    <span></span>
-  </a>
-</section>
+  <!-- SERVIÇOS -->
+  <section class="section services" id="servicos" aria-labelledby="services-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">02 — Serviços</p>
+        <h2 class="h2" id="services-title">O que eu faço</h2>
+      </div>
 
-<!-- PORTFOLIO -->
-<section class="portfolio" id="portfolio">
-  <div class="section-seam" aria-hidden="true"><span class="section-seam__line"></span></div>
-  <div class="section-head reveal">
-    <p class="section-tag">// 01 — Trabalhos</p>
-    <h2>Meu <span>Portfólio</span></h2>
-    <p class="section-desc">Uma seleção de vídeos que já editei.</p>
-  </div>
+      <div class="services__grid">
+        <article class="service reveal">
+          <span class="service__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3z"/></svg>
+          </span>
+          <h3>Vlogs para YouTube</h3>
+          <p>Corte, ritmo, trilha e legendas para vídeos longos que mantêm o público assistindo.</p>
+        </article>
+        <article class="service reveal">
+          <span class="service__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="m10.5 9.5 4 2.5-4 2.5z"/></svg>
+          </span>
+          <h3>Reels, TikTok e Shorts</h3>
+          <p>Edição vertical dinâmica, com legendas animadas e um gancho forte nos primeiros segundos.</p>
+        </article>
+        <article class="service reveal">
+          <span class="service__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>
+          </span>
+          <h3>Vídeos comerciais</h3>
+          <p>Peças para marcas e empresas: institucionais, treinamentos e conteúdos de venda.</p>
+        </article>
+        <article class="service reveal">
+          <span class="service__icon" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+          </span>
+          <h3>Motion design</h3>
+          <p>Títulos, lower thirds, vinhetas e animações de logo que dão identidade ao vídeo.</p>
+        </article>
+      </div>
 
-  <div class="filters" id="filters">
-    <button class="filter active" data-filter="all" aria-pressed="true">Todos</button>
-    <button class="filter" data-filter="vertical" aria-pressed="false">Vídeo Vertical</button>
-    <button class="filter" data-filter="horizontal" aria-pressed="false">Vídeo Horizontal</button>
-  </div>
+      <div class="process reveal">
+        <h3 class="process__heading">Como funciona</h3>
+        <ol class="process__steps">
+          <li class="process__step">
+            <span class="process__num">01</span>
+            <h4>Briefing</h4>
+            <p>Você me conta o objetivo, as referências e o prazo.</p>
+          </li>
+          <li class="process__step">
+            <span class="process__num">02</span>
+            <h4>Edição</h4>
+            <p>Primeira versão com cortes, trilha, cor e motion.</p>
+          </li>
+          <li class="process__step">
+            <span class="process__num">03</span>
+            <h4>Ajustes e entrega</h4>
+            <p>Revisões e arquivo final no formato de cada plataforma.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
 
-  <div class="grid" id="grid">
-    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="iew5npO-93A" tabindex="0" role="button" aria-label="Assistir: como manter a dieta durante a semana (preparando marmitas)">
-      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/iew5npO-93A/hqdefault.jpg')">
-        <span class="card__play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
+  <!-- CONTATO -->
+  <section class="section contact" id="contato" aria-labelledby="contact-title">
+    <div class="container contact__inner">
+      <div class="contact__intro reveal">
+        <p class="eyebrow">03 — Contato</p>
+        <h2 class="contact__title" id="contact-title">Vamos criar algo <span>juntos</span></h2>
+        <p class="contact__text">Conte sobre o seu projeto pelo formulário ou pelo canal que preferir.</p>
+
+        <ul class="contact__links">
+          <li>
+            <a class="contact-link" href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">
+              <span class="contact-link__icon" aria-hidden="true">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>
+              </span>
+              <span class="contact-link__text">
+                <span class="contact-link__label">Instagram</span>
+                <span class="contact-link__value">@its.gbedit</span>
+              </span>
+              <span class="contact-link__arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <a class="contact-link" href="mailto:its.gbedit@gmail.com">
+              <span class="contact-link__icon" aria-hidden="true">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              </span>
+              <span class="contact-link__text">
+                <span class="contact-link__label">E-mail</span>
+                <span class="contact-link__value">its.gbedit@gmail.com</span>
+              </span>
+              <span class="contact-link__arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <a class="contact-link" href="tel:+5511954122310">
+              <span class="contact-link__icon" aria-hidden="true">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+              </span>
+              <span class="contact-link__text">
+                <span class="contact-link__label">Telefone / WhatsApp</span>
+                <span class="contact-link__value">(11) 95412-2310</span>
+              </span>
+              <span class="contact-link__arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div class="card__info">
-        <h3>como manter a dieta durante a semana (preparando marmitas)</h3>
-        <p>Horizontal</p>
+
+      <div class="form-card reveal">
+        <form class="form" id="contactForm">
+          <div class="form__row">
+            <div class="field">
+              <label for="name">Nome</label>
+              <input type="text" id="name" name="name" placeholder="Seu nome" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="message">Sobre o projeto</label>
+            <textarea id="message" name="message" rows="5" placeholder="Tipo de vídeo, prazo, referências…" required></textarea>
+          </div>
+          <button type="submit" class="form__submit" id="formSubmit">Enviar mensagem</button>
+          <p class="form__note" id="formNote" aria-live="polite"></p>
+        </form>
+
+        <div class="form-success" id="formSuccess" role="status" hidden>
+          <span class="form-success__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <h3 class="form-success__title" id="formSuccessTitle" tabindex="-1">Mensagem enviada</h3>
+          <p>Obrigado pelo contato! Vou ler e te responder por e-mail.</p>
+          <button class="btn btn--ghost" id="formAgain" type="button">Enviar outra mensagem</button>
+        </div>
       </div>
-    </article>
-    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="agY1oMIIgfc" tabindex="0" role="button" aria-label="Assistir: final de semana em Orlando (Disney springs, treinos, girls night)">
-      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/agY1oMIIgfc/hqdefault.jpg')">
-        <span class="card__play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-      </div>
-      <div class="card__info">
-        <h3>final de semana em Orlando (Disney springs, treinos, girls night)</h3>
-        <p>Horizontal</p>
-      </div>
-    </article>
-    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="BlSJeWXsxzc" tabindex="0" role="button" aria-label="Assistir: vlog meia maratona floripa | retirada de kit + pré e pós">
-      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/BlSJeWXsxzc/hqdefault.jpg')">
-        <span class="card__play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-      </div>
-      <div class="card__info">
-        <h3>vlog meia maratona floripa | retirada de kit + pré e pós</h3>
-        <p>Horizontal</p>
-      </div>
-    </article>
-    <article class="card card--horizontal card--video" data-cat="horizontal" data-video="065tihMJ19s" tabindex="0" role="button" aria-label="Assistir: como melhorar seus resultados em visitas comerciais">
-      <div class="card__thumb card__thumb--photo" style="background-image:url('https://i.ytimg.com/vi/065tihMJ19s/hqdefault.jpg')">
-        <span class="card__play" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </span>
-      </div>
-      <div class="card__info">
-        <h3>como melhorar seus resultados em visitas comerciais</h3>
-        <p>Horizontal · feito em parceria com @produtoracliffs</p>
-      </div>
-    </article>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <img src="assets/logo.png" alt="" class="footer__logo" width="34" height="24">
+      <span>© <span id="year">2026</span> Gustavo Bezerra</span>
+    </div>
+    <nav class="footer__links" aria-label="Rodapé">
+      <a href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">@its.gbedit</a>
+      <a href="#top">Voltar ao topo ↑</a>
+    </nav>
   </div>
-  <p class="grid__empty" id="gridEmpty" hidden>Vídeos verticais em breve 👀</p>
-</section>
+</footer>
 
 <!-- VIDEO MODAL -->
-<div class="video-modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Player de vídeo" inert>
-  <span class="video-modal__trap" tabindex="0" data-trap="start"></span>
-  <div class="video-modal__box">
-    <button class="video-modal__close" id="videoModalClose" aria-label="Fechar vídeo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <div class="video-modal__inner">
-      <div class="video-modal__player" id="videoModalPlayer"></div>
+<div class="modal" id="modal" inert>
+  <div class="modal__overlay" id="modalOverlay"></div>
+  <span class="modal__trap" tabindex="0" data-trap="start"></span>
+  <div class="modal__panel" id="modalPanel" role="dialog" aria-modal="true" aria-label="Vídeo">
+    <div class="modal__video" id="modalVideo"></div>
+    <div class="modal__bar">
+      <div class="modal__info">
+        <p class="modal__title" id="modalTitle"></p>
+        <p class="modal__meta" id="modalMeta"></p>
+      </div>
+      <div class="modal__actions">
+        <a class="btn btn--ghost btn--sm" id="modalYoutube" href="https://www.youtube.com/" target="_blank" rel="noopener">Assistir no YouTube ↗</a>
+        <button class="modal__close" id="modalClose" type="button" aria-label="Fechar">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>
   </div>
-  <span class="video-modal__trap" tabindex="0" data-trap="end"></span>
+  <span class="modal__trap" tabindex="0" data-trap="end"></span>
 </div>
-
-<!-- CONTACT -->
-<section class="contact" id="contact">
-  <div class="section-seam" aria-hidden="true"><span class="section-seam__line"></span></div>
-  <div class="glow glow--contact"></div>
-  <div class="section-head reveal">
-    <p class="section-tag">// 02 — Contato</p>
-    <h2>Vamos criar algo <span>incrível</span> juntos</h2>
-    <p class="section-desc">Disponível para novos projetos de edição e design. Entre em contato pelo canal que preferir.</p>
-  </div>
-
-  <div class="contact__grid">
-    <a class="contact__card reveal" href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">
-      <span class="contact__icon">
-        <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.8a4.2 4.2 0 1 1 0 8.4 4.2 4.2 0 0 1 0-8.4zm0 2a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4zM17.4 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-      </span>
-      <p class="contact__label">Instagram</p>
-      <p class="contact__value">@its.gbedit</p>
-    </a>
-
-    <a class="contact__card reveal" href="mailto:its.gbedit@gmail.com">
-      <span class="contact__icon">
-        <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm17 2.9-7.4 5.6a1 1 0 0 1-1.2 0L4 7.9V18h16V7.9zM4.5 6l7.5 5.6L19.5 6h-15z"/></svg>
-      </span>
-      <p class="contact__label">E-mail</p>
-      <p class="contact__value">its.gbedit@gmail.com</p>
-    </a>
-
-    <a class="contact__card reveal" href="tel:+5511954122310">
-      <span class="contact__icon">
-        <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.4.55 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11 11 0 0 0 .55 3.4 1 1 0 0 1-.25 1L6.6 10.8z"/></svg>
-      </span>
-      <p class="contact__label">Telefone</p>
-      <p class="contact__value">(11) 95412-2310</p>
-    </a>
-  </div>
-
-  <form class="contact__form reveal" id="contactForm">
-    <div class="form__row">
-      <div class="form__field">
-        <label for="name">Nome</label>
-        <input type="text" id="name" name="name" placeholder="Seu nome" autocomplete="name" required>
-      </div>
-      <div class="form__field">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
-      </div>
-    </div>
-    <div class="form__field">
-      <label for="message">Mensagem</label>
-      <textarea id="message" name="message" rows="4" placeholder="Conte um pouco sobre seu projeto..." required></textarea>
-    </div>
-    <button type="submit" class="form__submit">Enviar mensagem</button>
-    <p class="form__note" id="formNote" aria-live="polite"></p>
-  </form>
-</section>
-
-<footer class="footer">
-  <img src="assets/logo.png" alt="Logo GB" class="footer__logo-img">
-  <p>&copy; <span id="year"></span> Gustavo Bezerra. Todos os direitos reservados.</p>
-  <a href="https://instagram.com/its.gbedit" target="_blank" rel="noopener">@its.gbedit</a>
-</footer>
 
 <script src="js/script.js"></script>
 </body>
