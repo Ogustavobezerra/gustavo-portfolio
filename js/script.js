@@ -1,5 +1,5 @@
-// Formspree endpoint — replace SEU_ID with the form ID from formspree.io
-const FORM_ENDPOINT = 'https://formspree.io/f/SEU_ID';
+// Formspree endpoint
+const FORM_ENDPOINT = 'https://formspree.io/f/mbgdqbow';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
